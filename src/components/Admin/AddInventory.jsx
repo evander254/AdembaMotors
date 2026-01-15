@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { supabase } from '../../supabaseClient';
 import AdminSidebar from './AdminSidebar';
 
 const AddInventory = () => {
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState({ type: '', text: '' });
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [coverPhoto, setCoverPhoto] = useState(null);
+    const [galleryPhotos, setGalleryPhotos] = useState([]);
 
     // Form State
     const [formData, setFormData] = useState({
@@ -18,8 +21,24 @@ const AddInventory = () => {
         availability: true,
     });
 
-    const [coverPhoto, setCoverPhoto] = useState(null);
-    const [galleryPhotos, setGalleryPhotos] = useState([]);
+    // Load saved data from localStorage on mount
+    useEffect(() => {
+        const savedData = localStorage.getItem('ademba_add_inventory_form');
+        if (savedData) {
+            try {
+                setFormData(JSON.parse(savedData));
+            } catch (error) {
+                console.error("Error parsing saved form data:", error);
+            }
+        }
+    }, []);
+
+    // Save data to localStorage whenever it changes
+    useEffect(() => {
+        localStorage.setItem('ademba_add_inventory_form', JSON.stringify(formData));
+    }, [formData]);
+
+    // ... (rest of the state and handlers remain the same) ...
 
     const handleInputChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -28,6 +47,8 @@ const AddInventory = () => {
             [name]: type === 'checkbox' ? checked : value
         }));
     };
+
+    // ... (handlers) ...
 
     const handleCoverChange = (e) => {
         if (e.target.files && e.target.files[0]) {
@@ -96,6 +117,9 @@ const AddInventory = () => {
             if (dbError) throw dbError;
 
             setMessage({ type: 'success', text: 'Car added to inventory successfully!' });
+
+            // Clear saved data
+            localStorage.removeItem('ademba_add_inventory_form');
             // Reset Form
             setFormData({
                 carName: '', brand: '', model: '', prodYear: '', millage: '',
@@ -113,11 +137,25 @@ const AddInventory = () => {
     };
 
     return (
-        <div className="min-h-screen bg-[#0A0A0A] flex">
-            <AdminSidebar />
+        <div className="min-h-screen bg-[#0A0A0A] flex relative">
+            {/* Mobile Sidebar Overlay */}
+            {isSidebarOpen && (
+                <div
+                    className="fixed inset-0 bg-black/50 z-40 md:hidden"
+                    onClick={() => setIsSidebarOpen(false)}
+                ></div>
+            )}
 
-            <main className="flex-1 overflow-y-auto">
-                <header className="glass-card border-b border-white/10 p-6 sticky top-0 z-10 bg-[#0A0A0A]/80 backdrop-blur-md">
+            <AdminSidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+
+            <main className="flex-1 overflow-y-auto h-screen">
+                <header className="glass-card border-b border-white/10 p-6 sticky top-0 z-10 bg-[#0A0A0A]/80 backdrop-blur-md flex items-center space-x-4">
+                    <button
+                        className="md:hidden text-white p-2"
+                        onClick={() => setIsSidebarOpen(true)}
+                    >
+                        <i className="fas fa-bars text-xl"></i>
+                    </button>
                     <h1 className="text-2xl font-bold">Add Inventory</h1>
                 </header>
 
@@ -153,7 +191,7 @@ const AddInventory = () => {
                         {/* Details */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label className="block text-gray-400 mb-2">Mileage</label>
+                                <label className="block text-gray-400 mb-2">CC</label>
                                 <input name="millage" value={formData.millage} onChange={handleInputChange} type="number" className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:border-[#D4AF37] focus:outline-none" required />
                             </div>
                             <div>

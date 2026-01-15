@@ -7,6 +7,7 @@ const ManageInventory = ({ mode }) => {
     const [cars, setCars] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     useEffect(() => {
         fetchCars();
@@ -62,12 +63,28 @@ const ManageInventory = ({ mode }) => {
     };
 
     return (
-        <div className="min-h-screen bg-[#0A0A0A] flex">
-            <AdminSidebar />
+        <div className="min-h-screen bg-[#0A0A0A] flex relative">
+            {/* Mobile Sidebar Overlay */}
+            {isSidebarOpen && (
+                <div
+                    className="fixed inset-0 bg-black/50 z-40 md:hidden"
+                    onClick={() => setIsSidebarOpen(false)}
+                ></div>
+            )}
 
-            <main className="flex-1 overflow-y-auto">
+            <AdminSidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+
+            <main className="flex-1 overflow-y-auto h-screen">
                 <header className="glass-card border-b border-white/10 p-6 flex justify-between items-center sticky top-0 z-10 bg-[#0A0A0A]/80 backdrop-blur-md">
-                    <h1 className="text-2xl font-bold">{getPageTitle()}</h1>
+                    <div className="flex items-center space-x-4">
+                        <button
+                            className="md:hidden text-white p-2"
+                            onClick={() => setIsSidebarOpen(true)}
+                        >
+                            <i className="fas fa-bars text-xl"></i>
+                        </button>
+                        <h1 className="text-2xl font-bold">{getPageTitle()}</h1>
+                    </div>
                     <div className="flex items-center space-x-4">
                         <div className="relative">
                             <input

@@ -63,7 +63,7 @@ const ViewCar = () => {
 
     const handleContact = () => {
         const message = encodeURIComponent(`Hello, I am interested in buying the ${car.CarName}. Is it still available?`);
-        window.open(`https://wa.me/254729661126?text=${message}`, '_blank');
+        window.open(`https://wa.me/254707597062?text=${message}`, '_blank');
     };
 
     return (

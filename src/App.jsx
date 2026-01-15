@@ -11,6 +11,9 @@ import ManageInventory from './components/Admin/ManageInventory';
 import EditCar from './components/Admin/EditCar';
 import ViewCar from './components/ViewCar';
 import SearchResults from './components/SearchResults';
+import Inventory from './components/Inventory';
+import Services from './components/Services';
+import Contact from './components/Contact';
 
 // Landing Page Component
 const LandingPage = () => {
@@ -34,7 +37,10 @@ function App() {
           {/* Public Routes */}
           <Route path="/" element={<LandingPage />} />
           <Route path="/car/:id" element={<ViewCar />} />
+          <Route path="/inventory" element={<Inventory />} />
           <Route path="/search" element={<SearchResults />} />
+          <Route path="/services" element={<Services />} />
+          <Route path="/contact" element={<Contact />} />
 
           {/* Admin Routes */}
           <Route path="/admin" element={<AdminLogin />} />

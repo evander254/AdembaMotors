@@ -10,6 +10,8 @@ const Dashboard = () => {
         reserved: 3 // Placeholder
     });
 
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
     useEffect(() => {
         fetchStats();
     }, []);
@@ -47,14 +49,30 @@ const Dashboard = () => {
     };
 
     return (
-        <div className="min-h-screen bg-[#0A0A0A] flex">
+        <div className="min-h-screen bg-[#0A0A0A] flex relative">
+            {/* Mobile Sidebar Overlay */}
+            {isSidebarOpen && (
+                <div
+                    className="fixed inset-0 bg-black/50 z-40 md:hidden"
+                    onClick={() => setIsSidebarOpen(false)}
+                ></div>
+            )}
+
             {/* Sidebar */}
-            <AdminSidebar />
+            <AdminSidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
             {/* Main Content */}
-            <main className="flex-1 overflow-y-auto">
-                <header className="glass-card border-b border-white/10 p-6 flex justify-between items-center sticky top-0 z-10 bg-[#0A0A0A]/80 backdrop-blur-md">
-                    <h1 className="text-2xl font-bold">Dashboard Overview</h1>
+            <main className="flex-1 overflow-y-auto h-screen">
+                <header className="glass-card border-b border-white/10 p-6 flex justify-between items-center sticky top-0 z-30 bg-[#0A0A0A]/80 backdrop-blur-md">
+                    <div className="flex items-center space-x-4">
+                        <button
+                            className="md:hidden text-white p-2"
+                            onClick={() => setIsSidebarOpen(true)}
+                        >
+                            <i className="fas fa-bars text-xl"></i>
+                        </button>
+                        <h1 className="text-2xl font-bold">Dashboard Overview</h1>
+                    </div>
                     <div className="flex items-center space-x-4">
                         <button className="w-10 h-10 rounded-full glass-card flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-colors">
                             <i className="fas fa-bell"></i>

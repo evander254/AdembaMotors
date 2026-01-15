@@ -17,7 +17,7 @@ const FeaturedVehicles = () => {
                 .select('*')
                 .eq('Availability', true)
                 .order('created_at', { ascending: false })
-                .limit(6);
+                .limit(12);
 
             if (error) throw error;
             setVehicles(data);
@@ -84,9 +84,11 @@ const FeaturedVehicles = () => {
                 )}
 
                 <div className="text-center mt-16 fade-in">
-                    <button className="glass-card px-10 py-4 rounded-full font-medium hover:bg-white/10 transition-colors border gold-border">
-                        <span className="gold-text text-lg">View Full Inventory</span>
-                    </button>
+                    <Link to="/inventory">
+                        <button className="glass-card px-10 py-4 rounded-full font-medium hover:bg-white/10 transition-colors border gold-border">
+                            <span className="gold-text text-lg">View Full Inventory</span>
+                        </button>
+                    </Link>
                 </div>
             </div>
         </section>

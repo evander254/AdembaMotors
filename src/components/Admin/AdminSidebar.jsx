@@ -1,21 +1,30 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
-const AdminSidebar = () => {
+const AdminSidebar = ({ isOpen, onClose }) => {
     const [isInventoryOpen, setIsInventoryOpen] = useState(true);
     const location = useLocation();
 
     const isActive = (path) => location.pathname === path;
 
     return (
-        <aside className="w-64 glass-card border-r border-white/10 hidden md:flex flex-col bg-[#0A0A0A]">
-            <div className="p-6 border-b border-white/10">
+        <aside className={`
+            fixed md:relative inset-y-0 left-0 z-50 w-64 bg-[#0A0A0A] glass-card border-r border-white/10 flex flex-col transition-transform duration-300 ease-in-out
+            ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+        `}>
+            <div className="p-6 border-b border-white/10 flex justify-between items-center">
                 <div className="flex items-center space-x-2">
                     <div className="w-8 h-8 gold-gradient rounded-full flex items-center justify-center">
                         <span className="text-black font-bold text-lg">A</span>
                     </div>
                     <h2 className="text-xl font-bold">Ademba<span className="gold-text">Admin</span></h2>
                 </div>
+                <button
+                    onClick={onClose}
+                    className="md:hidden text-gray-400 hover:text-white"
+                >
+                    <i className="fas fa-times text-xl"></i>
+                </button>
             </div>
 
             <nav className="flex-1 p-4 space-y-2 overflow-y-auto">

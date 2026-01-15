@@ -9,6 +9,7 @@ const EditCar = () => {
     const [loading, setLoading] = useState(false);
     const [fetchLoading, setFetchLoading] = useState(true);
     const [message, setMessage] = useState({ type: '', text: '' });
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     // Form State
     const [formData, setFormData] = useState({
@@ -144,11 +145,25 @@ const EditCar = () => {
     }
 
     return (
-        <div className="min-h-screen bg-[#0A0A0A] flex">
-            <AdminSidebar />
+        <div className="min-h-screen bg-[#0A0A0A] flex relative">
+            {/* Mobile Sidebar Overlay */}
+            {isSidebarOpen && (
+                <div
+                    className="fixed inset-0 bg-black/50 z-40 md:hidden"
+                    onClick={() => setIsSidebarOpen(false)}
+                ></div>
+            )}
 
-            <main className="flex-1 overflow-y-auto">
-                <header className="glass-card border-b border-white/10 p-6 sticky top-0 z-10 bg-[#0A0A0A]/80 backdrop-blur-md">
+            <AdminSidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+
+            <main className="flex-1 overflow-y-auto h-screen">
+                <header className="glass-card border-b border-white/10 p-6 sticky top-0 z-10 bg-[#0A0A0A]/80 backdrop-blur-md flex items-center space-x-4">
+                    <button
+                        className="md:hidden text-white p-2"
+                        onClick={() => setIsSidebarOpen(true)}
+                    >
+                        <i className="fas fa-bars text-xl"></i>
+                    </button>
                     <h1 className="text-2xl font-bold">Edit Vehicle</h1>
                 </header>
 
