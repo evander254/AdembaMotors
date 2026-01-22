@@ -18,7 +18,7 @@ const Inventory = () => {
     });
 
     // Pagination
-    const CARS_PER_PAGE = 54;
+    const CARS_PER_PAGE = 20;
     const [currentPage, setCurrentPage] = useState(1);
     const [totalCount, setTotalCount] = useState(0);
 
@@ -86,6 +86,9 @@ const Inventory = () => {
         }));
         setCurrentPage(1); // Reset to page 1 on filter change
     };
+
+    // View Mode State
+    const [viewMode, setViewMode] = useState('grid');
 
     const totalPages = Math.ceil(totalCount / CARS_PER_PAGE);
 
@@ -168,6 +171,24 @@ const Inventory = () => {
                         <div className="flex-1">
                             <div className="flex justify-between items-center mb-6">
                                 <h2 className="text-2xl font-bold text-white">Inventory <span className="text-gray-500 text-lg font-normal">({totalCount} Vehicles)</span></h2>
+
+                                {/* View Toggles */}
+                                <div className="flex space-x-2 bg-white/5 p-1 rounded-lg border border-white/10">
+                                    <button
+                                        onClick={() => setViewMode('grid')}
+                                        className={`p-2 rounded-md transition-colors ${viewMode === 'grid' ? 'bg-[#D4AF37] text-black' : 'text-gray-400 hover:text-white hover:bg-white/10'}`}
+                                        title="Grid View"
+                                    >
+                                        <i className="fas fa-th-large"></i>
+                                    </button>
+                                    <button
+                                        onClick={() => setViewMode('list')}
+                                        className={`p-2 rounded-md transition-colors ${viewMode === 'list' ? 'bg-[#D4AF37] text-black' : 'text-gray-400 hover:text-white hover:bg-white/10'}`}
+                                        title="List View"
+                                    >
+                                        <i className="fas fa-list"></i>
+                                    </button>
+                                </div>
                             </div>
 
                             {loading ? (
@@ -180,28 +201,48 @@ const Inventory = () => {
                                 </div>
                             ) : (
                                 <>
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                                    <div className={viewMode === 'grid'
+                                        ? "grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6"
+                                        : "flex flex-col space-y-4"
+                                    }>
                                         {cars.map((car) => (
-                                            <div key={car.id} className="glass-card rounded-xl overflow-hidden group hover:border-[#D4AF37]/50 transition-all duration-300">
-                                                <Link to={`/car/${car.id}`} className="block relative h-48 overflow-hidden">
+                                            <div key={car.id} className={`glass-card rounded-xl overflow-hidden group hover:border-[#D4AF37]/50 transition-all duration-300 ${viewMode === 'list' ? 'flex flex-col sm:flex-row' : ''}`}>
+                                                <Link to={`/car/${car.id}`} className={`block relative overflow-hidden ${viewMode === 'list' ? 'w-full sm:w-64 h-48 sm:h-auto flex-shrink-0' : 'h-32 sm:h-48'}`}>
                                                     <img src={car.CPic} alt={car.CarName} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                                                 </Link>
-                                                <div className="p-4">
-                                                    <div className="flex justify-between items-start mb-2">
-                                                        <h3 className="font-bold text-white truncate pr-2">{car.CarName}</h3>
-                                                        <span className="gold-text font-bold whitespace-nowrap text-sm">Ksh. {car.Price?.toLocaleString()}</span>
-                                                    </div>
-                                                    <div className="flex justify-between text-xs text-gray-400 mt-3">
-                                                        <div className="flex items-center space-x-1">
-                                                            <i className="fas fa-tachometer-alt gold-text"></i>
-                                                            <span>{car.Millage?.toLocaleString()} CC</span>
+                                                <div className={`p-3 sm:p-4 flex flex-col justify-between flex-grow ${viewMode === 'list' ? 'sm:py-4 sm:px-6' : ''}`}>
+                                                    <div>
+                                                        <div className="flex justify-between items-start mb-2">
+                                                            <h3 className={`font-bold text-white ${viewMode === 'list' ? 'text-xl' : 'text-sm sm:text-base truncate pr-1 sm:pr-2'}`}>{car.CarName}</h3>
+                                                            {viewMode === 'grid' && <span className="gold-text font-bold whitespace-nowrap text-xs sm:text-sm">Ksh. {car.Price?.toLocaleString()}</span>}
                                                         </div>
-                                                        <div className="flex items-center space-x-1">
-                                                            <i className="fas fa-calendar gold-text"></i>
-                                                            <span>{car.ProdYear}</span>
+
+                                                        {viewMode === 'list' && (
+                                                            <div className="mb-4">
+                                                                <span className="gold-text font-bold text-lg">Ksh. {car.Price?.toLocaleString()}</span>
+                                                                <p className="text-gray-400 text-sm mt-2 line-clamp-2">{car.Description || 'No description available for this vehicle.'}</p>
+                                                            </div>
+                                                        )}
+
+                                                        <div className={`flex text-gray-400 ${viewMode === 'list' ? 'space-x-6 text-xs' : 'justify-between mt-2 sm:mt-3 text-[10px] sm:text-xs'}`}>
+                                                            <div className="flex items-center space-x-1">
+                                                                <i className="fas fa-tachometer-alt gold-text"></i>
+                                                                <span>{car.Millage?.toLocaleString()} CC</span>
+                                                            </div>
+                                                            <div className="flex items-center space-x-1">
+                                                                <i className="fas fa-calendar gold-text"></i>
+                                                                <span>{car.ProdYear}</span>
+                                                            </div>
+                                                            {viewMode === 'list' && (
+                                                                <div className="flex items-center space-x-1">
+                                                                    <i className="fas fa-gas-pump gold-text"></i>
+                                                                    <span>{car.FuelType || 'Petrol'}</span>
+                                                                </div>
+                                                            )}
                                                         </div>
                                                     </div>
-                                                    <Link to={`/car/${car.id}`} className="block mt-4 w-full py-2 rounded bg-white/5 hover:bg-white/10 text-center text-sm transition-colors text-white border border-white/10">
+
+                                                    <Link to={`/car/${car.id}`} className={`block w-full py-1.5 sm:py-2 rounded bg-white/5 hover:bg-white/10 text-center text-xs sm:text-sm transition-colors text-white border border-white/10 ${viewMode === 'list' ? 'mt-4 sm:mt-0 sm:w-auto sm:self-start sm:px-6' : 'mt-3 sm:mt-4'}`}>
                                                         View Details
                                                     </Link>
                                                 </div>

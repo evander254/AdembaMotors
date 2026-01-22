@@ -46,30 +46,30 @@ const Contact = () => {
                                     </div>
                                     <h3 className="font-bold mb-2">Phone</h3>
                                     <p className="text-gray-400 text-sm">+254 707 597 062</p>
-                                    <p className="text-gray-400 text-sm">+254 722 000 000</p>
+                                    <p className="text-gray-400 text-sm">+254 708 626 328</p>
                                 </div>
                                 <div className="glass-card p-6 rounded-xl">
                                     <div className="w-10 h-10 rounded-full bg-[#D4AF37]/10 flex items-center justify-center mb-4">
                                         <i className="fas fa-envelope text-[#D4AF37]"></i>
                                     </div>
                                     <h3 className="font-bold mb-2">Email</h3>
-                                    <p className="text-gray-400 text-sm">info@adembamotors.com</p>
-                                    <p className="text-gray-400 text-sm">sales@adembamotors.com</p>
+                                    <p className="text-gray-400 text-sm">info@adembamotors.co.ke</p>
+                                    <p className="text-gray-400 text-sm">sales@adembamotors.co.ke</p>
                                 </div>
                                 <div className="glass-card p-6 rounded-xl md:col-span-2">
                                     <div className="w-10 h-10 rounded-full bg-[#D4AF37]/10 flex items-center justify-center mb-4">
                                         <i className="fas fa-map-marker-alt text-[#D4AF37]"></i>
                                     </div>
                                     <h3 className="font-bold mb-2">Location</h3>
-                                    <p className="text-gray-400 text-sm">Nairobi, Kenya</p>
-                                    <p className="text-gray-400 text-sm">Along Ngong Road, near Adams Arcade</p>
+                                    <p className="text-gray-400 text-sm">Pembe Za Ndovu, Mombasa</p>
+                                    {/* <p className="text-gray-400 text-sm">Along Ngong Road, near Adams Arcade</p> */}
                                 </div>
                             </div>
 
                             {/* Map Placeholder */}
                             <div className="glass-card p-2 rounded-xl h-64 md:h-80 w-full overflow-hidden relative">
                                 <iframe
-                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15955.16303256087!2d36.784612!3d-1.299532!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMsKwMTcnNTguMyJTIDM2wrA0NyczNC42IkU!5e0!3m2!1sen!2ske!4v1635000000000!5m2!1sen!2ske"
+                                    src="https://maps.google.com/maps?q=-4.061564,39.6661018&z=17&output=embed"
                                     width="100%"
                                     height="100%"
                                     style={{ border: 0 }}
