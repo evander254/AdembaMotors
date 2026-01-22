@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { supabase } from '../supabaseClient';
 
-const slides = [
+const defaultSlides = [
     {
         image: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
         title: "1967 Mercedes-Benz 280SL",
@@ -28,8 +29,49 @@ const slides = [
 ];
 
 const Hero = () => {
+    const [slides, setSlides] = useState(defaultSlides);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isAnimating, setIsAnimating] = useState(false);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        fetchCars();
+    }, []);
+
+    const fetchCars = async () => {
+        try {
+            setLoading(true);
+            const { data, error } = await supabase
+                .from('cars')
+                .select('*');
+
+            if (error) throw error;
+
+            if (data && data.length > 0) {
+                // Shuffle array and pick 3
+                const shuffled = data.sort(() => 0.5 - Math.random());
+                const selected = shuffled.slice(0, 3);
+
+                const formattedSlides = selected.map(car => ({
+                    image: car.CPic || "https://images.unsplash.com/photo-1503376780353-7e6692767b70?ixlib=rb-4.0.3", // Fallback image
+                    title: car.CarName || "Unknown Car",
+                    description: car.Description ? (car.Description.length > 100 ? car.Description.substring(0, 100) + "..." : car.Description) : "No description available.",
+                    mileage: car.Millage ? `${car.Millage} km` : "N/A",
+                    transmission: "Automatic", // Default as it's missing in DB schema provided
+                    price: car.Price ? `Ksh.${car.Price.toLocaleString()}` : "Price On Request"
+                }));
+
+                // Only update if we have at least 1 car, otherwise keep default
+                if (formattedSlides.length > 0) {
+                    setSlides(formattedSlides);
+                }
+            }
+        } catch (error) {
+            console.error('Error fetching hero cars:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const nextSlide = () => {
         setIsAnimating(true);
@@ -54,7 +96,7 @@ const Hero = () => {
             nextSlide();
         }, 8000);
         return () => clearInterval(timer);
-    }, []);
+    }, [slides]); // Added dependency on slides
 
     // Effect to trigger fade-in animation on slide change
     useEffect(() => {
@@ -103,27 +145,31 @@ const Hero = () => {
                 ))}
             </div>
 
-            {/* Controls */}
-            <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-30 flex space-x-4">
-                <button onClick={prevSlide} className="glass-card w-12 h-12 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors">
-                    <i className="fas fa-chevron-left gold-text"></i>
-                </button>
-                <button onClick={nextSlide} className="glass-card w-12 h-12 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors">
-                    <i className="fas fa-chevron-right gold-text"></i>
-                </button>
-            </div>
+            {/* Controls - Only show if more than 1 slide */}
+            {slides.length > 1 && (
+                <>
+                    <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-30 flex space-x-4">
+                        <button onClick={prevSlide} className="glass-card w-12 h-12 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors">
+                            <i className="fas fa-chevron-left gold-text"></i>
+                        </button>
+                        <button onClick={nextSlide} className="glass-card w-12 h-12 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors">
+                            <i className="fas fa-chevron-right gold-text"></i>
+                        </button>
+                    </div>
 
-            {/* Indicators */}
-            <div className="absolute bottom-8 right-8 z-30 flex space-x-2">
-                {slides.map((_, index) => (
-                    <button
-                        key={index}
-                        onClick={() => goToSlide(index)}
-                        className={`w-3 h-3 rounded-full transition-colors ${index === currentIndex ? 'gold-gradient bg-white/80' : 'bg-white/30 hover:bg-white/60'
-                            }`}
-                    ></button>
-                ))}
-            </div>
+                    {/* Indicators */}
+                    <div className="absolute bottom-8 right-8 z-30 flex space-x-2">
+                        {slides.map((_, index) => (
+                            <button
+                                key={index}
+                                onClick={() => goToSlide(index)}
+                                className={`w-3 h-3 rounded-full transition-colors ${index === currentIndex ? 'gold-gradient bg-white/80' : 'bg-white/30 hover:bg-white/60'
+                                    }`}
+                            ></button>
+                        ))}
+                    </div>
+                </>
+            )}
         </section>
     );
 };
